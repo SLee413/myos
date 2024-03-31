@@ -4,6 +4,8 @@
 
 #include "console.h"
 
+static char* const VGA_BUFFER = (char*) 0xb8000;
+
 /* Variables */
 
 // Cursor position
