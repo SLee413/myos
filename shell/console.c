@@ -9,15 +9,15 @@ static char* const VGA_BUFFER = (char*) 0xb8000;
 /* Variables */
 
 // Cursor position
-int cursor_pos_x = 0;
-int cursor_pos_y = 0;
+int vga_cursor_pos_x = 0;
+int vga_cursor_pos_y = 0;
 
 /* Validates the cursor spot */
 void validate_cursor() {
     // If the cursor would go offscreen, then move down a line
-    if (cursor_pos_x >= VGA_WIDTH) {
-        cursor_pos_x = (cursor_pos_x - VGA_WIDTH);  // For things of multple chars
-        cursor_pos_y++;     // Eventually we'll validate this and move everything up
+    if (vga_cursor_pos_x >= VGA_WIDTH) {
+        vga_cursor_pos_x = (vga_cursor_pos_x - VGA_WIDTH);  // For things of multple chars
+        vga_cursor_pos_y++;     // Eventually we'll validate this and move everything up
     }
 }
 
@@ -36,8 +36,8 @@ void clear_terminal() {
 	}
 
     // Reset the cursor position
-    cursor_pos_x = 0;
-    cursor_pos_y = 0;
+    vga_cursor_pos_x = 0;
+    vga_cursor_pos_y = 0;
 }
 
 /* Print a character to the screen */
@@ -57,28 +57,28 @@ void print_character(char c) {
     switch (c) {
         // Newline - jump us to next line
         case '\n':
-            cursor_pos_x = 0;
-            cursor_pos_y++;
+            vga_cursor_pos_x = 0;
+            vga_cursor_pos_y++;
             validate_cursor();
             return;
         // Tab - we're just going to stick with 4 spaces, but
         //     tabs are usually smarter than that
         case '\t':
-            cursor_pos_x += 4;
+            vga_cursor_pos_x += 4;
             validate_cursor();
             return;
     }
 
     // Calculate the byte position
-    int byte_pos = (cursor_pos_y * VGA_BYTES_PER_CHARACTER * VGA_WIDTH) + 
-        (VGA_BYTES_PER_CHARACTER * cursor_pos_x);
+    int byte_pos = (vga_cursor_pos_y * VGA_BYTES_PER_CHARACTER * VGA_WIDTH) + 
+        (VGA_BYTES_PER_CHARACTER * vga_cursor_pos_x);
     
     // Write to the VGA buffer
     VGA_BUFFER[byte_pos] = c;
     VGA_BUFFER[byte_pos + 1] = 0x07;
 
     // Increment cursor
-    cursor_pos_x++;
+    vga_cursor_pos_x++;
     validate_cursor();
 }
 
