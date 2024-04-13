@@ -24,7 +24,7 @@ static VGA_Color terminal_background_color = BLACK; // Default background color 
 /* Validates the cursor spot */
 void validate_cursor() {
     // If the cursor would go offscreen, then move down a line
-    if (vga_cursor_pos_x >= VGA_WIDTH) {
+    if (cursor_pos_x >= VGA_WIDTH) {
         vga_cursor_pos_x = (vga_cursor_pos_x - VGA_WIDTH);  // For things of multple chars
         vga_cursor_pos_y++;     // Eventually we'll validate this and move everything up
     }
