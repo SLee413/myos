@@ -6,19 +6,15 @@
 
 void main() {
 
-	clear_terminal();
+     clear_terminal();
 
-	print_string("HELLO");
+     print_string_with_color("hello", YELLOW, CYAN);
 
-	print_line("WORLD \n");
+     print_line_with_color("World", MAGENTA, GREEN);
 
-	print_string("TODAY");
+     print_string("Today");
 
-	print_line("\n-- DEBUG --");
-	print_line("Line 1");
-	print_line("Line 2");
-	print_line("Line 3");
+     return;
 
-	return;
 }
 

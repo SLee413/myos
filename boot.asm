@@ -78,7 +78,7 @@ begin_32bit:
 	jmp KERNEL_ADDRESS
 
 
-NUM_SECTORS db 0x09
+NUM_SECTORS db 0x19
 DISK_SUCCESS_MESSAGE db "Read succeeded, continuing", 0
 DISK_READ_ERROR_MESSAGE db "Problem with disk read", 0
 DISK_SECTOR_ERROR_MESSAGE db "Read and requested sectors differ", 0
