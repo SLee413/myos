@@ -10,8 +10,8 @@ static char* const VGA_BUFFER = (char*) 0xb8000;
 /** Variables **/
 
 // Cursor position
-int vga_cursor_pos_x = 0;
-int vga_cursor_pos_y = 0;
+static int vga_cursor_pos_x = 0;
+static int vga_cursor_pos_y = 0;
 
 // VGA Color
 static VGA_Color terminal_font_color = LIGHT_GRAY; // Default font color will be light gray
