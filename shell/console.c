@@ -3,6 +3,7 @@
 */
 
 #include "console.h"
+#include "portmap.h"
 
 static char* const VGA_BUFFER = (char*) 0xb8000;
 
@@ -21,13 +22,22 @@ static VGA_Color terminal_background_color = BLACK; // Default background color 
 /** Functions **/
 
 
-/* Validates the cursor spot */
-void validate_cursor() {
+/* Validates and updates the cursor spot */
+void update_cursor() {
     // If the cursor would go offscreen, then move down a line
     if (vga_cursor_pos_x >= VGA_WIDTH) {
         vga_cursor_pos_x = (vga_cursor_pos_x - VGA_WIDTH);  // For things of multple chars
         vga_cursor_pos_y++;     // Eventually we'll validate this and move everything up
     }
+
+    // Calculate the cursor position
+    uint16_t cursor_position = (vga_cursor_pos_y * VGA_WIDTH) + vga_cursor_pos_x;
+
+    // Send the cursor to the keyboard
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (uint8_t) (cursor_position));
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (uint8_t) (cursor_position >> 8));
 }
 
 /* Clears the terminal screen */
@@ -47,6 +57,7 @@ void clear_terminal() {
     // Reset the cursor position
     vga_cursor_pos_x = 0;
     vga_cursor_pos_y = 0;
+    update_cursor();
 }
 
 /* Print a character to the screen with a given background/font color */
@@ -58,13 +69,13 @@ void print_character_with_color(char c, VGA_Color bg_color, VGA_Color font_color
         case '\n':
             vga_cursor_pos_x = 0;
             vga_cursor_pos_y++;
-            validate_cursor();
+            update_cursor();
             return;
-        // Tab - we're just going to stick with 4 spaces, but
-        //     tabs are usually smarter than that
+        // Tab - jump us to the next multiple of 4
         case '\t':
             vga_cursor_pos_x += 4;
-            validate_cursor();
+            vga_cursor_pos_x -= (vga_cursor_pos_x % 4); // lock to nearest multiple of 4
+            update_cursor();
             return;
     }
 
@@ -78,7 +89,7 @@ void print_character_with_color(char c, VGA_Color bg_color, VGA_Color font_color
 
     // Increment cursor
     vga_cursor_pos_x++;
-    validate_cursor();
+    update_cursor();
 }
 
 /* Prints a string to the console with a given bg/font color */
@@ -120,3 +131,4 @@ void set_terminal_font_color(VGA_Color col) {
 void set_terminal_background_color(VGA_Color col) {
      terminal_background_color = col;
 }
+
